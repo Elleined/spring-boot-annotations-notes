@@ -44,6 +44,8 @@
 `@Entity`
 `@Table` 
 `@Column`
+`@Enumerated`
+`@ForeignKey`
 `@JoinColumn`
 `@JoinTable` 
 `@Inheritance`
@@ -54,7 +56,6 @@
 `@Embedded`
 `@Embeddable`
 `@Transient` 
-
 
 # Spring test annotations
 `@DataJpaTest`
@@ -75,7 +76,7 @@
 `@SqlGroup` 
 `@SqlConfig`
 
-# Mapstruct
+# Mapstruct annotations
 `@Mapper`
 `@Mappings` 
 `@Mapping`
@@ -83,4 +84,15 @@
 `@AfterMapping`
 `@Context`
 `@MappingTarget`
-``
+
+# Lombok annotations
+`@Data`
+`@AllArgsConstructors`
+`@NoArgsConstructor`
+`@RequiredArgsConstructor`
+`@Value`
+`@Builder`
+`@ToString`
+`@EqualsAndHashCode`
+`@Setter`
+`@Getter`
