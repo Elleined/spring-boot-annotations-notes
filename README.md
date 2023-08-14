@@ -68,8 +68,11 @@
 `@EnableEurekaServer`
 `@EnableFeignClient`
 
-# Kafka annotations
+# Kafka annotation
 `@KafkaListener` 
+
+# Scheduler annotation
+`@Scheduled`
 
 # Execute SQL script
 `@Sql`
