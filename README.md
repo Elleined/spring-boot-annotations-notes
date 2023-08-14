@@ -78,24 +78,3 @@
 `@Sql`
 `@SqlGroup` 
 `@SqlConfig`
-
-# Mapstruct annotations
-`@Mapper`
-`@Mappings` 
-`@Mapping`
-`@BeforeMapping`
-`@AfterMapping`
-`@Context`
-`@MappingTarget`
-
-# Lombok annotations
-`@Data`
-`@AllArgsConstructors`
-`@NoArgsConstructor`
-`@RequiredArgsConstructor`
-`@Value`
-`@Builder`
-`@ToString`
-`@EqualsAndHashCode`
-`@Setter`
-`@Getter`
