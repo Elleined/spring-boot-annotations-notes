@@ -78,3 +78,15 @@
 `@Sql`
 `@SqlGroup` 
 `@SqlConfig`
+
+# Hibernate Validator annotations
+`@Positive`
+`@Email`
+`@NotBlank`
+`@NotNull`
+`@NotEmpty`
+`@Negative`
+`@Valid`
+
+# Jackson Library annptations
+`@JsonProperty` 
