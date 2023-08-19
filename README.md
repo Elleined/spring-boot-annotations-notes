@@ -30,6 +30,7 @@
 `@PutMapping`
 `@DeleteMapping`
 `@PatchMapping`
+`@CrossOrigin`
 
 # Spring Data JPA
 `@Query`
