@@ -91,3 +91,5 @@
 
 # Jackson Library annptations
 `@JsonProperty` 
+`@JsonPropertyOrder`
+`@JsonIgnore`
