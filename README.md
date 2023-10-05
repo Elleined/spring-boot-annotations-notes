@@ -20,6 +20,7 @@
 `@ExceptionHandler`
 `@PathVariable`
 `@RequestParam`
+`@RequestPart`
 `@RequestMapping`
 `@ModelAttribute`
 `@SessionAttribute`
