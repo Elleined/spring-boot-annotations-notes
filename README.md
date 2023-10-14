@@ -90,7 +90,17 @@
 `@Negative`
 `@Valid`
 
-# Jackson Library annptations
+# Jackson Library annotations
 `@JsonProperty` 
 `@JsonPropertyOrder`
 `@JsonIgnore`
+
+# JUnit annotations
+`@Test`
+`@BeforeEach`
+`@AfterEach`
+`@BeforeAll`
+`@AfterAll`
+`@Disabled`
+`@Tag`
+`@DisplayName`
