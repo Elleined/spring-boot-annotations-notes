@@ -1,4 +1,4 @@
-# all-spring-boot-annotations
+# spring-boot-annotations-notes
 
 # Spring annotations
 `@Component`
