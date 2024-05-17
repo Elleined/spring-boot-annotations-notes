@@ -502,30 +502,300 @@ public class CorsController {
 
 
 # Spring Data JPA Annotations
-`@Query`
-`@Param`
-`@Modifying`
-`@Transactional`
-`@PersistenceContext`
-`@Repository`
-`@Id` 
-`GeneratedValue` 
-`@SequenceGenerator`
-`@Entity`
-`@Table` 
-`@Column`
-`@Enumerated`
-`@ForeignKey`
-`@JoinColumn`
-`@JoinTable` 
-`@Inheritance`
-`@OneToOne`
-`@OneToMany` 
-`@ManyToOne`
-`@ManyToMany`
-`@Embedded`
-`@Embeddable`
-`@Transient` 
+1. `@Query`: Used to define custom JPQL (Java Persistence Query Language) queries or native SQL queries.
+
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    @Query("SELECT u FROM User u WHERE u.age > :age")
+    List<User> findByAgeGreaterThan(@Param("age") int age);
+}
+```
+
+
+2. `@Param`: Used to bind parameters in a Spring Data query.
+
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    @Query("SELECT u FROM User u WHERE u.name = :name")
+    User findByName(@Param("name") String name);
+}
+```
+
+
+3. `@Modifying`: Marks a method as modifying query. Useful for update or delete operations in JPQL.
+
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    @Modifying
+    @Query("UPDATE User u SET u.age = :age WHERE u.id = :id")
+    int updateUserAge(@Param("age") int age, @Param("id") Long id);
+}
+```
+
+
+4. `@Transactional`: Specifies that a method should run within a transaction.
+
+
+```java
+@Service
+@Transactional
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+
+
+    public void updateUserAge(Long id, int newAge) {
+        userRepository.updateUserAge(newAge, id);
+    }
+}
+```
+
+
+5. `@PersistenceContext`: Injects a `EntityManager` into a Spring-managed bean.
+
+
+```java
+@Repository
+public class UserRepositoryImpl implements UserRepositoryCustom {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+
+    // Custom methods using EntityManager
+}
+```
+
+
+6. `@Repository`: Indicates that an annotated class is a repository, typically used for database operations.
+
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Methods for database operations
+}
+```
+
+
+7. `@Id`: Marks a field as the primary key of an entity.
+
+
+```java
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    // Other fields and methods
+}
+```
+
+
+8. `@GeneratedValue`: Specifies the generation strategy for the primary key.
+
+
+```java
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+```
+
+
+9. `@SequenceGenerator`: Defines a sequence generator for the primary key.
+
+
+```java
+@Id
+@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+@SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", allocationSize = 1)
+private Long id;
+```
+
+
+10. `@Entity`: Marks a class as an entity to be managed by the JPA provider.
+
+
+```java
+@Entity
+public class User {
+    // Entity class definition
+}
+```
+
+
+11. `@Table`: Specifies the table to map the entity.
+
+
+```java
+@Entity
+@Table(name = "users")
+public class User {
+    // Entity class definition
+}
+```
+
+
+12. `@Column`: Specifies the mapping for a persistent property or field.
+
+
+```java
+@Column(name = "user_name", nullable = false)
+private String name;
+```
+
+
+13. `@Enumerated`: Maps an enum type to a database column.
+
+
+```java
+public enum UserType {
+    ADMIN,
+    USER
+}
+
+
+@Entity
+public class User {
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
+}
+```
+
+
+14. `@ForeignKey`: Specifies the foreign key constraint for a column.
+
+
+```java
+@Column(name = "address_id")
+@ForeignKey(name = "fk_user_address")
+private Long addressId;
+```
+
+
+15. `@JoinColumn`: Specifies the joining column for a relationship.
+
+
+```java
+@OneToOne
+@JoinColumn(name = "address_id")
+private Address address;
+```
+
+
+16. `@JoinTable`: Specifies the joining table for a many-to-many relationship.
+
+
+```java
+@ManyToMany
+@JoinTable(
+    name = "user_role",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"))
+private Set<Role> roles;
+```
+
+
+17. `@Inheritance`: Specifies the inheritance strategy for an entity class hierarchy.
+
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type")
+public class User {
+    // Common fields
+}
+```
+
+
+18. `@OneToOne`: Defines a one-to-one relationship between two entities.
+
+
+```java
+@Entity
+public class User {
+    @OneToOne(mappedBy = "user")
+    private UserProfile userProfile;
+}
+```
+
+
+19. `@OneToMany`: Defines a one-to-many relationship between two entities.
+
+
+```java
+@Entity
+public class User {
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+}
+```
+
+
+20. `@ManyToOne`: Defines a many-to-one relationship between two entities.
+
+
+```java
+@Entity
+public class Order {
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+}
+```
+
+
+21. `@ManyToMany`: Defines a many-to-many relationship between two entities.
+
+
+```java
+@Entity
+public class User {
+    @ManyToMany(mappedBy = "users")
+    private Set<Role> roles;
+}
+```
+
+
+22. `@Embedded`: Specifies a persistent field or property of an entity whose value is an instance of an embeddable class.
+
+
+```java
+@Entity
+public class User {
+    @Embedded
+    private Address address;
+}
+```
+
+
+23. `@Embeddable`: Specifies a class whose instances are stored as part of an owning entity.
+
+
+```java
+@Embeddable
+public class Address {
+    private String street;
+    private String city;
+}
+```
+
+
+24. `@Transient`: Specifies that a field should not be persisted to the database.
+
+
+```java
+@Transient
+private String temporaryData;
+```
+
 
 # Spring test annotations
 `@DataJpaTest`
