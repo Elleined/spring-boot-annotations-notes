@@ -798,49 +798,650 @@ private String temporaryData;
 
 
 # Spring test annotations
-`@DataJpaTest`
-`@SpringBootTest`
+1. `@DataJpaTest`: This annotation is used in Spring Boot tests to test JPA applications. It automatically configures the required components to test JPA repositories, including configuring an in-memory database and setting up the EntityManager. It's particularly useful for testing data access layer components without needing to configure a complete Spring application context.
+
+
+2. `@SpringBootTest`: This annotation is used to specify that a test is a Spring Boot integration test. It loads the complete Spring application context and allows testing of the entire application, including all beans and components.
+
+
+Here's a simple explanation with code samples:
+
+
+```java
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+@DataJpaTest
+public class UserRepositoryTest {
+
+
+    @Autowired
+    private TestEntityManager entityManager;
+
+
+    @Autowired
+    private UserRepository userRepository;
+
+
+    @Test
+    public void testSaveUser() {
+        // Given
+        User user = new User("John Doe", 30);
+        
+        // When
+        userRepository.save(user);
+        
+        // Then
+        User foundUser = entityManager.find(User.class, user.getId());
+        assertThat(foundUser.getName()).isEqualTo(user.getName());
+    }
+}
+```
+
+
+In this example, `@DataJpaTest` is used to configure the test for JPA repositories. `TestEntityManager` is auto-configured to provide a convenient way to interact with the in-memory database during tests. `@Autowired` is used to inject the `TestEntityManager` and the `UserRepository`. The test method `testSaveUser()` tests the save operation of the `UserRepository` by saving a user, retrieving it from the database using the `TestEntityManager`, and asserting that it matches the expected user. 
+
+
+```java
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+
+@SpringBootTest
+public class UserServiceIntegrationTest {
+
+
+    @Autowired
+    private UserService userService;
+
+
+    @Test
+    public void testUpdateUserAge() {
+        // Given
+        Long userId = 1L;
+        int newAge = 35;
+        
+        // When
+        userService.updateUserAge(userId, newAge);
+        
+        // Then
+        User updatedUser = userService.findById(userId);
+        assertThat(updatedUser.getAge()).isEqualTo(newAge);
+    }
+}
+```
+
 
 # Spring boot enablers annotations
-`@EnableScheduling`
-`@EnableTransactionManagement`
-`@EnableDiscoveryClient`
-`@EnableEurekaServer`
-`@EnableFeignClient`
+1. `@EnableScheduling`: Enables Spring's scheduled task execution capability, allowing the application to define scheduled tasks using annotations like `@Scheduled`.
+
+
+```java
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+
+@EnableScheduling
+@Component
+public class ScheduledTasks {
+
+
+    @Scheduled(fixedRate = 5000)
+    public void reportCurrentTime() {
+        System.out.println("Current time: " + new Date());
+    }
+}
+```
+
+
+In this example, `@EnableScheduling` is used at the application level to enable scheduling. The `ScheduledTasks` class defines a scheduled task `reportCurrentTime()` that prints the current time every 5 seconds.
+
+
+2. `@EnableTransactionManagement`: Enables Spring's annotation-driven transaction management.
+
+
+```java
+import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+
+@Configuration
+@EnableTransactionManagement
+public class AppConfig {
+
+
+    // Configuration beans and other setup
+}
+```
+
+
+In this example, `@EnableTransactionManagement` is used to enable transaction management for the Spring application. This allows using declarative transaction management using annotations like `@Transactional`.
+
+
+3. `@EnableDiscoveryClient`: Indicates that a Spring Boot application should register itself with a service registry (like Eureka) to participate in service discovery.
+
+
+```java
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Configuration;
+
+
+@EnableDiscoveryClient
+@Configuration
+public class AppConfig {
+
+
+    // Configuration beans and other setup
+}
+```
+
+
+In this example, `@EnableDiscoveryClient` is used to enable service discovery for the Spring Boot application. This allows the application to register itself with a service registry.
+
+
+4. `@EnableEurekaServer`: Used to enable the Eureka server in a Spring Boot application, allowing it to act as a service registry for other microservices.
+
+
+```java
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
+@EnableEurekaServer
+@SpringBootApplication
+public class EurekaServerApplication {
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}
+```
+
+
+In this example, `@EnableEurekaServer` is used to enable the Eureka server in a Spring Boot application, allowing it to act as a service registry for other microservices.
+
+
+5. `@EnableFeignClients`: Enables Feign declarative REST client, allowing the application to easily make HTTP requests to other services.
+
+
+```java
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Configuration;
+
+
+@EnableFeignClients
+@Configuration
+public class AppConfig {
+
+
+    // Configuration beans and other setup
+}
+```
+
 
 # Kafka annotation
-`@KafkaListener` 
+1. `@KafkaListener`: This annotation is used in Spring Kafka to create message listener containers for Kafka topics. It marks a method to be invoked when a message is received from a specified Kafka topic.
+
+
+```java
+import org.springframework.kafka.annotation.KafkaListener;
+
+
+public class KafkaConsumer {
+
+
+    @KafkaListener(topics = "myTopic")
+    public void listen(String message) {
+        System.out.println("Received message: " + message);
+        // Process the received message
+    }
+}
+```
+
+
+In this example, the `listen()` method is annotated with `@KafkaListener` with the `topics` attribute set to `"myTopic"`, indicating that this method will be invoked when a message is received from the "myTopic" Kafka topic.
+
 
 # Scheduler annotation
-`@Scheduled`
+
+
+2. `@Scheduled`: This annotation is used in Spring to schedule tasks to be executed at a fixed rate, with a fixed delay, or at a specific time using cron expressions.
+
+
+```java
+import org.springframework.scheduling.annotation.Scheduled;
+
+
+public class ScheduledTask {
+
+
+    @Scheduled(fixedRate = 5000) // Executes every 5 seconds
+    public void performTask() {
+        // Task logic
+        System.out.println("Task executed at: " + new Date());
+    }
+}
+```
+
 
 # Execute SQL script
-`@Sql`
-`@SqlGroup` 
-`@SqlConfig`
+1. `@Sql`: Defines SQL scripts to be executed before or after a test method.
+
+
+```java
+import org.springframework.test.context.jdbc.Sql;
+
+
+@Sql("/data.sql")
+public class DatabaseTest {
+    // Test methods
+}
+```
+
+
+In this example, the `@Sql` annotation is used to specify that the SQL script `data.sql` should be executed before the test methods in the `DatabaseTest` class.
+
+
+2. `@SqlGroup`: Allows grouping multiple `@Sql` annotations together for executing multiple SQL scripts.
+
+
+```java
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
+
+
+@SqlGroup({
+    @Sql("/schema.sql"),
+    @Sql("/data.sql")
+})
+public class DatabaseTest {
+    // Test methods
+}
+```
+
+
+Here, the `@SqlGroup` annotation is used to specify that both `schema.sql` and `data.sql` should be executed before the test methods in the `DatabaseTest` class.
+
+
+3. `@SqlConfig`: Configures SQL scripts execution behavior, such as script execution order and transaction management.
+
+
+```java
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+
+
+@Sql("/data.sql")
+@SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
+public class DatabaseTest {
+    // Test methods
+}
+```
+
 
 # Hibernate Validator annotations
-`@Positive`
-`@Email`
-`@NotBlank`
-`@NotNull`
-`@NotEmpty`
-`@Negative`
-`@Valid`
+1. `@Positive`: Indicates that the annotated element must be a positive number (greater than zero).
+
+
+```java
+import javax.validation.constraints.Positive;
+
+
+public class Product {
+    
+    @Positive
+    private int quantity;
+    
+    // other fields and methods
+}
+```
+
+
+In this example, the `@Positive` annotation ensures that the `quantity` field of the `Product` class must be a positive number.
+
+
+2. `@Email`: Specifies that the annotated element must be a valid email address format.
+
+
+```java
+import javax.validation.constraints.Email;
+
+
+public class User {
+    
+    @Email
+    private String email;
+    
+    // other fields and methods
+}
+```
+
+
+Here, the `@Email` annotation ensures that the `email` field of the `User` class must be in a valid email address format.
+
+
+3. `@NotBlank`: Specifies that the annotated element must not be null and must contain at least one non-whitespace character.
+
+
+```java
+import javax.validation.constraints.NotBlank;
+
+
+public class Account {
+    
+    @NotBlank
+    private String username;
+    
+    // other fields and methods
+}
+```
+
+
+In this example, the `@NotBlank` annotation ensures that the `username` field of the `Account` class must not be blank.
+
+
+4. `@NotNull`: Indicates that the annotated element must not be null.
+
+
+```java
+import javax.validation.constraints.NotNull;
+
+
+public class Order {
+    
+    @NotNull
+    private Long productId;
+    
+    // other fields and methods
+}
+```
+
+
+Here, the `@NotNull` annotation ensures that the `productId` field of the `Order` class must not be null.
+
+
+5. `@NotEmpty`: Specifies that the annotated element must not be null and must contain at least one non-null element.
+
+
+```java
+import javax.validation.constraints.NotEmpty;
+
+
+public class ShoppingCart {
+    
+    @NotEmpty
+    private List<Long> productIds;
+    
+    // other fields and methods
+}
+```
+
+
+In this example, the `@NotEmpty` annotation ensures that the `productIds` field of the `ShoppingCart` class must not be empty.
+
+
+6. `@Negative`: Indicates that the annotated element must be a negative number (less than zero).
+
+
+```java
+import javax.validation.constraints.Negative;
+
+
+public class Transaction {
+    
+    @Negative
+    private double amount;
+    
+    // other fields and methods
+}
+```
+
+
+Here, the `@Negative` annotation ensures that the `amount` field of the `Transaction` class must be a negative number.
+
+
+7. `@Valid`: Used to validate nested objects or method parameters within an object.
+
+
+```java
+import javax.validation.Valid;
+
+
+public class OrderRequest {
+    
+    @Valid
+    private Address shippingAddress;
+    
+    // other fields and methods
+}
+```
+
 
 # Jackson Library annotations
-`@JsonProperty` 
-`@JsonPropertyOrder`
-`@JsonIgnore`
+1. `@JsonProperty`: Specifies the JSON property name for a field or method during serialization and deserialization.
+
+
+```java
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
+public class User {
+    
+    @JsonProperty("user_id")
+    private Long id;
+    
+    @JsonProperty("user_name")
+    private String name;
+    
+    // other fields and methods
+}
+```
+
+
+In this example, the `@JsonProperty` annotation is used to specify the JSON property names `user_id` and `user_name` for the `id` and `name` fields respectively during serialization and deserialization.
+
+
+2. `@JsonPropertyOrder`: Specifies the order of properties in the serialized JSON.
+
+
+```java
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+
+@JsonPropertyOrder({"name", "age", "email"})
+public class UserProfile {
+    
+    private String name;
+    private int age;
+    private String email;
+    
+    // other fields and methods
+}
+```
+
+
+Here, the `@JsonPropertyOrder` annotation is used to specify the order of properties `name`, `age`, and `email` in the serialized JSON.
+
+
+3. `@JsonIgnore`: Indicates that a field or method should be ignored during serialization and deserialization.
+
+
+```java
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+public class Employee {
+    
+    private Long id;
+    private String name;
+    
+    @JsonIgnore
+    private String password;
+    
+    // other fields and methods
+}
+```
 
 # JUnit annotations
-`@Test`
-`@BeforeEach`
-`@AfterEach`
-`@BeforeAll`
-`@AfterAll`
-`@Disabled`
-`@Tag`
-`@DisplayName`
+1. `@Test`: Marks a method as a test method that should be executed by the JUnit test runner.
+
+
+```java
+import org.junit.jupiter.api.Test;
+
+
+public class MathUtilsTest {
+
+
+    @Test
+    public void testAddition() {
+        // Test logic for addition
+    }
+}
+```
+
+
+In this example, the `testAddition()` method is marked with `@Test`, indicating that it is a test method.
+
+
+2. `@BeforeEach`: Indicates that a method should be executed before each test method in the test class.
+
+
+```java
+import org.junit.jupiter.api.BeforeEach;
+
+
+public class MathUtilsTest {
+
+
+    @BeforeEach
+    public void setUp() {
+        // Initialization logic before each test method
+    }
+}
+```
+
+
+Here, the `setUp()` method is annotated with `@BeforeEach`, meaning it will run before each test method in the test class.
+
+
+3. `@AfterEach`: Indicates that a method should be executed after each test method in the test class.
+
+
+```java
+import org.junit.jupiter.api.AfterEach;
+
+
+public class MathUtilsTest {
+
+
+    @AfterEach
+    public void tearDown() {
+        // Cleanup logic after each test method
+    }
+}
+```
+
+
+In this example, the `tearDown()` method is annotated with `@AfterEach`, meaning it will run after each test method in the test class.
+
+
+4. `@BeforeAll`: Indicates that a method should be executed once before all test methods in the test class.
+
+
+```java
+import org.junit.jupiter.api.BeforeAll;
+
+
+public class MathUtilsTest {
+
+
+    @BeforeAll
+    public static void init() {
+        // Initialization logic before all test methods
+    }
+}
+```
+
+
+Here, the `init()` method is annotated with `@BeforeAll`, meaning it will run once before all test methods in the test class.
+
+
+5. `@AfterAll`: Indicates that a method should be executed once after all test methods in the test class.
+
+
+```java
+import org.junit.jupiter.api.AfterAll;
+
+
+public class MathUtilsTest {
+
+
+    @AfterAll
+    public static void tearDown() {
+        // Cleanup logic after all test methods
+    }
+}
+```
+
+
+In this example, the `tearDown()` method is annotated with `@AfterAll`, meaning it will run once after all test methods in the test class.
+
+
+6. `@Disabled`: Marks a test class or method as disabled, so it will not be executed by the test runner.
+
+
+```java
+import org.junit.jupiter.api.Disabled;
+
+
+@Disabled
+public class DeprecatedCodeTest {
+    // Test methods for deprecated code
+}
+```
+
+
+Here, the entire `DeprecatedCodeTest` class is disabled using `@Disabled`, meaning none of its test methods will be executed.
+
+
+7. `@Tag`: Adds tags to test classes or methods, allowing for grouping and filtering tests.
+
+
+```java
+import org.junit.jupiter.api.Tag;
+
+
+@Tag("integration")
+public class IntegrationTests {
+    // Integration test methods
+}
+```
+
+
+In this example, the `IntegrationTests` class is tagged with `"integration"`, allowing for filtering tests based on this tag.
+
+
+8. `@DisplayName`: Provides a custom display name for test classes or methods in test reports.
+
+
+```java
+import org.junit.jupiter.api.DisplayName;
+
+
+@DisplayName("Math Utils Test Suite")
+public class MathUtilsTest {
+    // Test methods for Math Utils
+}
+```
+
 
 
