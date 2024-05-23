@@ -800,81 +800,10 @@ private String temporaryData;
 # Spring test annotations
 1. `@DataJpaTest`: This annotation is used in Spring Boot tests to test JPA applications. It automatically configures the required components to test JPA repositories, including configuring an in-memory database and setting up the EntityManager. It's particularly useful for testing data access layer components without needing to configure a complete Spring application context.
 
-
 2. `@SpringBootTest`: This annotation is used to specify that a test is a Spring Boot integration test. It loads the complete Spring application context and allows testing of the entire application, including all beans and components.
 
+3. `@WebMvcTest`: Used for testing controller classes.
 
-Here's a simple explanation with code samples:
-
-
-```java
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import static org.assertj.core.api.Assertions.assertThat;
-
-
-@DataJpaTest
-public class UserRepositoryTest {
-
-
-    @Autowired
-    private TestEntityManager entityManager;
-
-
-    @Autowired
-    private UserRepository userRepository;
-
-
-    @Test
-    public void testSaveUser() {
-        // Given
-        User user = new User("John Doe", 30);
-        
-        // When
-        userRepository.save(user);
-        
-        // Then
-        User foundUser = entityManager.find(User.class, user.getId());
-        assertThat(foundUser.getName()).isEqualTo(user.getName());
-    }
-}
-```
-
-
-In this example, `@DataJpaTest` is used to configure the test for JPA repositories. `TestEntityManager` is auto-configured to provide a convenient way to interact with the in-memory database during tests. `@Autowired` is used to inject the `TestEntityManager` and the `UserRepository`. The test method `testSaveUser()` tests the save operation of the `UserRepository` by saving a user, retrieving it from the database using the `TestEntityManager`, and asserting that it matches the expected user. 
-
-
-```java
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-
-@SpringBootTest
-public class UserServiceIntegrationTest {
-
-
-    @Autowired
-    private UserService userService;
-
-
-    @Test
-    public void testUpdateUserAge() {
-        // Given
-        Long userId = 1L;
-        int newAge = 35;
-        
-        // When
-        userService.updateUserAge(userId, newAge);
-        
-        // Then
-        User updatedUser = userService.findById(userId);
-        assertThat(updatedUser.getAge()).isEqualTo(newAge);
-    }
-}
-```
 
 
 # Spring boot enablers annotations
